@@ -9,6 +9,7 @@ import darkmatter.DarkMatter
 import darkmatter.UNIT_SCALE
 import darkmatter.ecs.components.FacingComponent
 import darkmatter.ecs.components.GraphicComponent
+import darkmatter.ecs.components.MoveComponent
 import darkmatter.ecs.components.PlayerComponent
 import darkmatter.ecs.components.TransformComponent
 import ktx.ashley.entity
@@ -16,8 +17,10 @@ import ktx.ashley.get
 import ktx.ashley.with
 import ktx.graphics.use
 import ktx.log.Logger
+import kotlin.math.min
 
 private val LOG = Logger(name = "First Screen")
+private const val MAX_DELTA_TIME = 1 / 20f
 
 class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
@@ -26,41 +29,21 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
             engine.entity {
                 with<TransformComponent> {
-                    position.set(4f, 8f, 0f)
+                    setInitialPosition(4f, 8f, 0f)
                 }
 
+                with<MoveComponent>()
                 with<GraphicComponent>()
                 with<PlayerComponent>()
                 with<FacingComponent>()
 
-            }
-
-        engine.entity {
-                with<TransformComponent> {
-                    position.set(0f, 1f, 0f)
-                }
-
-                with<GraphicComponent> {
-                    setSpriteRegion(game.shipAtlas.findRegion("ship_left"))
-                }
-
-            }
-
-        engine.entity {
-                with<TransformComponent> {
-                    position.set(8f, 1f, 0f)
-                }
-
-                with<GraphicComponent> {
-                    setSpriteRegion(game.shipAtlas.findRegion("ship_right"))
-                }
             }
     }
 
     override fun render(delta: Float) {
         val spriteBatch = (game.batch as SpriteBatch)
         spriteBatch.renderCalls = 0
-        engine.update(delta)
+        engine.update(min(MAX_DELTA_TIME, delta))
         LOG.debug { "Render Calls: ${spriteBatch.renderCalls}" }
     }
 

@@ -45,8 +45,8 @@ class RenderSystem(
         graphic.sprite.run {
             rotation = transform.rotationDeg
             setBounds(
-                transform.position.x,
-                transform.position.y,
+                transform.interpolatedPosition.x,
+                transform.interpolatedPosition.y,
                 transform.size.x,
                 transform.size.y
             )
